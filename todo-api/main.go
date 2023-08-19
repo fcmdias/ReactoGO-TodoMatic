@@ -21,7 +21,7 @@ var categoriesCollection *mongo.Collection
 
 var mongoURI = ""
 
-var version = "0.0.1"
+var version = "0.0.2"
 
 type Category struct {
 	ID        primitive.ObjectID `json:"id, omitempty" bson:"_id"`
@@ -96,13 +96,10 @@ func getTasksHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	filter := bson.D{}
-	// filter := bson.D{{"completed", "false"}}
-
 	cursor, err := tasksCollection.Find(context.TODO(), filter)
 	if err != nil {
 		panic(err)
 	}
-	// end find
 
 	var results []Task
 	if err = cursor.All(context.TODO(), &results); err != nil {
@@ -116,18 +113,21 @@ func getTasksHandler(w http.ResponseWriter, r *http.Request) {
 		// if err != nil {
 		// 	panic(err)
 		// }
+		if result.Categories == nil {
+			result.Categories = []primitive.ObjectID{}
+		}
 		tasks = append(tasks, result)
 	}
 
-	// // Manually marshal the tasks slice into JSON
-	responseData, err := json.Marshal(tasks)
+	responseB, err := json.Marshal(tasks)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Error encoding tasks to JSON: %v", err), http.StatusInternalServerError)
+		log.Println(err)
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	w.Write(responseData)
+	w.Write(responseB)
+
 }
 
 func updateTaskStatusHandler(w http.ResponseWriter, r *http.Request) {
