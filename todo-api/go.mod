@@ -1,4 +1,4 @@
-module github.com/fcmdias/ReactoGO-TodoMatic
+module github.com/fcmdias/ReactoGO-TodoMatic/todo-api
 
 go 1.20
 
