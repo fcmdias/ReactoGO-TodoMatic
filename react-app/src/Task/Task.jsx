@@ -36,32 +36,48 @@ const Task = ({ task, onComplete, onDelete, categories, onUpdateTaskCategories }
 
   };
 
-
   return (
-    <li key={task.id}>
-      {task.title} - {task.completed ? 'Completed' : 'Pending'}
-      {!task.completed && (
-        <>
-          <button onClick={() => onComplete(task.id)}>Complete</button>
-        </>
-      )}
-      <button onClick={() => onDelete(task.id)}>Delete</button>
-      <div>
-        Categories:
-        {categories.map(category => (
-          <label key={category.id}>
-            <input
-              type="checkbox"
-              value={category.id}
-              checked={checkedCategories.includes(category.id)}
-              onChange={() => handleCheckboxChange(category.id)}
-            />
-            {category.title}
-          </label>
-        ))}
+    <li className="list-group-item d-flex justify-content-between align-items-start" key={task.id}>
+      <div className="col-9">
+        <span>{task.title} - {task.completed ? 'Completed' : 'Pending'}</span>
+        <div className="mt-2">
+          {categories && categories.length > 0 && (
+            <div>
+              <strong>Categories:</strong>
+              {categories.map(category => (
+                <label className="mr-2" key={category.id}>
+                  <input
+                    type="checkbox"
+                    value={category.id}
+                    checked={checkedCategories.includes(category.id)}
+                    onChange={() => handleCheckboxChange(category.id)}
+                    className="btn-check"
+                  />
+                  <button
+                    className={`btn btn-sm ${checkedCategories.includes(category.id) ? 'btn-dark' : 'btn-outline-secondary'}`}
+                    onClick={() => handleCheckboxChange(category.id)}
+                  >
+                    {category.title}
+                  </button>
+                </label>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="col-3">
+        {!task.completed && (
+          <button className="btn btn-success mb-2" onClick={() => onComplete(task.id)}>
+            Complete
+          </button>
+        )}
+        <button className="btn btn-danger" onClick={() => onDelete(task.id)}>
+          Delete
+        </button>
       </div>
     </li>
   );
+
 };
 
 export default Task;
