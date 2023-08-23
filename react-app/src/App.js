@@ -154,30 +154,39 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>Categories</h1>
-      </header>
-      <main className="App-main">
-        <CategoryForm onAddCategory={handleAddCategory} />
-        <CategoryList
-          categories={categories}
-          onDelete={handleDeleteCategory}
-        />
-      </main>
-      
-      <header className="App-header">
-        <h1>To-Do List App</h1>
-      </header>
-      <main className="App-main">
-        <TaskForm onAddTask={handleAddTask} />
-        <TaskList
-          tasks={tasks}
-          onComplete={handleCompleteTask}
-          onDelete={handleDeleteTask}
-          categories = {categories}
-          onUpdateTaskCategories={handleUpdateTaskCategories}
-        />
-      </main>
+
+
+      <div className='container'>
+        <h1>Task Dashboard</h1>
+
+        <div className="row">
+
+
+
+        <div className="col-md-6">
+          <h2>Tasks</h2>
+          <TaskList
+            tasks={tasks}
+            onComplete={handleCompleteTask}
+            onDelete={handleDeleteTask}
+            categories = {categories}
+            onUpdateTaskCategories={handleUpdateTaskCategories}
+          />
+          <TaskForm onAddTask={handleAddTask} />
+        </div>
+
+
+
+        <div className="col-md-6">
+          <h2>Categories</h2>
+          <CategoryList
+            categories={categories}
+            onDelete={handleDeleteCategory}
+          />
+          <CategoryForm onAddCategory={handleAddCategory} />
+        </div>
+      </div>
+      </div>
     </div>
   );
 }
