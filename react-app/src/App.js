@@ -77,6 +77,7 @@ function App() {
   };
 
   const handleAddTask = async (newTask) => {
+    newTask.categories = [];
     try {
       const response = await fetch('/todo-api/tasks/create', {
         method: 'POST',
