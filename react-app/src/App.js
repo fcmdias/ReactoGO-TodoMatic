@@ -4,6 +4,7 @@ import TaskList from './Task/List';
 import TaskForm from './Task/Create';
 import CategoryList from './Category/List';
 import CategoryForm from './Category/Create';
+import CategorizedTasks from './Task/CategorizedTasks';
 
 
 function App() {
@@ -131,8 +132,6 @@ function App() {
     }
   };
 
-
-
   const handleUpdateTaskCategories = async (taskId, selectedCategories) => {
     try {
       // Update the categories for the task
@@ -151,42 +150,43 @@ function App() {
     }
   };
 
-
-
   return (
     <div className="App">
-
-
       <div className='container'>
         <h1>Task Dashboard</h1>
-
         <div className="row">
-
-
-
-        <div className="col-md-6">
-          <h2>Tasks</h2>
-          <TaskList
-            tasks={tasks}
-            onComplete={handleCompleteTask}
-            onDelete={handleDeleteTask}
-            categories = {categories}
-            onUpdateTaskCategories={handleUpdateTaskCategories}
-          />
-          <TaskForm onAddTask={handleAddTask} />
+          <div className="col-md-6">
+            <h2>Tasks</h2>
+            <TaskList
+              tasks={tasks}
+              onComplete={handleCompleteTask}
+              onDelete={handleDeleteTask}
+              categories = {categories}
+              onUpdateTaskCategories={handleUpdateTaskCategories}
+            />
+            <TaskForm onAddTask={handleAddTask} />
+          </div>
+          <div className="col-md-6">
+            <h2>Categories</h2>
+            <CategoryList
+              categories={categories}
+              onDelete={handleDeleteCategory}
+            />
+            <CategoryForm onAddCategory={handleAddCategory} />
+          </div>
         </div>
-
-
-
-        <div className="col-md-6">
-          <h2>Categories</h2>
-          <CategoryList
-            categories={categories}
-            onDelete={handleDeleteCategory}
-          />
-          <CategoryForm onAddCategory={handleAddCategory} />
+        <div className="row">
+          <div className="col-md-6">
+              <h2>Categorized Tasks</h2>
+                <CategorizedTasks
+                  categories={categories}
+                  tasks={tasks}
+                  handleCompleteTask={handleCompleteTask}
+                  handleDeleteTask={handleDeleteTask}
+                  handleUpdateTaskCategories={handleUpdateTaskCategories}
+                />
+            </div>
         </div>
-      </div>
       </div>
     </div>
   );

@@ -1,27 +1,9 @@
 import React from 'react';
 import Task from './Task';
 
-const TaskList = ({ tasks, onComplete, onDelete, categories, onUpdateTaskCategories }) => {
-
-
-  const example = {id: "1232", title: "example", completed: false, categories:[]}
+const TaskList = ({ tasks, onComplete, onDelete, categories, onUpdateTaskCategories }) => {  
   return (
     <div className="container">
-      <ul className="list-group">
-        <Task
-          key={example.id}
-          task={example}
-          onComplete={onComplete}
-          onDelete={onDelete}
-          categories={categories}
-          onUpdateTaskCategories={onUpdateTaskCategories}
-        />
-      </ul>
-        
-        
-        
-
-      
       {!tasks || tasks.length === 0 ? (
         <p>No tasks available.</p>
         ) : (
