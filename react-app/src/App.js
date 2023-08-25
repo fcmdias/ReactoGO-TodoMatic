@@ -1,14 +1,11 @@
 import React from 'react';
 import './App.css';
-import TaskList from './features/tasks/TasksList';
-import TaskCreate from './features/tasks/TaskCreate';
+import Dashboard from './components/Dashboard';
 
 function App() {
   return (
     <div className="App">
-      <h1>Tasks</h1>
-      <TaskCreate/>
-      <TaskList />
+      <Dashboard />
     </div>
   );
 }
