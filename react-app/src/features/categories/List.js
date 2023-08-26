@@ -11,11 +11,16 @@ const CategoryList = () => {
     }, [dispatch]);
 
     return (
-        <div>
+        <div className="list-group">
             {categories.map(category => (
-                <div key={category.id}>
-                    {category.title}
-                    <button onClick={() => dispatch(deleteCategory(category.id))}>Delete</button>
+                <div key={category.id} className="list-group-item d-flex justify-content-between">
+                    <span>{category.title}</span>
+                    <button 
+                        className="btn btn-sm btn-danger" 
+                        onClick={() => dispatch(deleteCategory(category.id))}
+                    >
+                        Delete
+                    </button>
                 </div>
             ))}
         </div>
