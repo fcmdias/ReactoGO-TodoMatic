@@ -31,6 +31,7 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request, col *mongo.Collec
 	task.ID = primitive.NewObjectID()
 	task.CreatedAt = time.Now()
 	task.Completed = false // Set default value
+	task.Categories = []primitive.ObjectID{}
 
 	_, err = col.InsertOne(context.Background(), task)
 	if err != nil {
