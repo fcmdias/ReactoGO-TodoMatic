@@ -1,7 +1,6 @@
-// src/components/TaskItem.js
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { deleteTask, updateTask } from './actions'; // Assuming updateTask is an available action
+import { deleteTask, updateTask, completeTask } from './actions'; // Assuming updateTask is an available action
 
 const TaskItem = ({ task }) => {
     const dispatch = useDispatch();
@@ -14,6 +13,10 @@ const TaskItem = ({ task }) => {
             dispatch(updateTask(task.id, task));
             setIsEditing(false);
         }
+    };
+
+    const handleCompletion = () => {
+        dispatch(completeTask(task.id));
     };
 
     return (
@@ -35,6 +38,12 @@ const TaskItem = ({ task }) => {
                 <>
                     {task.title}
                     <div>
+                        {task.completed ? (
+                            <span className="btn btn-outline-dark" style={{backgroundColor: 'transparent', cursor: 'default', borderColor: 'transparent', color: 'black'}}>Completed</span>
+                        ) : (
+                            <button className="btn btn-success btn-sm me-2" onClick={handleCompletion}>Complete</button>
+                        )}
+                        
                         <button className="btn btn-info btn-sm me-2" onClick={() => setIsEditing(true)}>Edit</button>
                         <button className="btn btn-danger btn-sm" onClick={() => dispatch(deleteTask(task.id))}>Delete</button>
                     </div>
