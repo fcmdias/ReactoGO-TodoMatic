@@ -1,11 +1,30 @@
 import React from 'react';
 
-const Sidebar = ({ setSection }) => {
+const Sidebar = ({ setSection, currentSection }) => {
     return (
-        <div className="list-group">
-            <button className="list-group-item list-group-item-action" onClick={() => setSection('home')}>Home</button>
-            <button className="list-group-item list-group-item-action" onClick={() => setSection('tasks')}>Tasks</button>
-            <button className="list-group-item list-group-item-action" onClick={() => setSection('categories')}>Categories</button>
+        <div className="nav nav-pills flex-column">
+            <button 
+                className={`nav-link ${currentSection === 'home' ? 'active' : ''}`} 
+                onClick={() => setSection('home')}
+            >
+                Home
+            </button>
+        
+        
+            <button 
+                className={`nav-link ${currentSection === 'tasks' && 'active'}`}
+                onClick={() => setSection('tasks')}
+            >
+                Tasks
+            </button>
+        
+        
+            <button 
+                className={`nav-link ${currentSection === 'categories' && 'active'}`}
+                onClick={() => setSection('categories')}
+            >
+                Categories
+            </button>
         </div>
     );
 };

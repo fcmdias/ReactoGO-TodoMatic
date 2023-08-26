@@ -34,7 +34,7 @@ const Dashboard = () => {
         <div className="container mt-5">
             <div className="row">
                 <div className="col-md-3">
-                    <Sidebar setSection={setSection} />
+                    <Sidebar setSection={setSection} currentSection={section} />
                 </div>
                 <div className="col-md-9">
                     {renderSection()}
