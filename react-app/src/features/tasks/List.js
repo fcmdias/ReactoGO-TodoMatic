@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchTasks, deleteTask } from './tasksActions';
+import { fetchTasks } from './actions';
+import TaskItem from './TaskItem';  // Import the new TaskItem component
 
 const TaskList = () => {
     const dispatch = useDispatch();
@@ -11,12 +12,9 @@ const TaskList = () => {
     }, [dispatch]);
 
     return (
-        <div>
+        <div className="list-group mt-3">
             {tasks.map(task => (
-                <div key={task.id}>
-                    {task.title}
-                    <button onClick={() => dispatch(deleteTask(task.id))}>Delete</button>
-                </div>
+                <TaskItem key={task.id} task={task} />  // Use TaskItem component here
             ))}
         </div>
     );

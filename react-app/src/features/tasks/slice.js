@@ -1,5 +1,5 @@
 
-import { FETCH_TASKS, ADD_TASK, DELETE_TASK, UPDATE_TASK } from './tasksActions';
+import { FETCH_TASKS, ADD_TASK, DELETE_TASK, UPDATE_TASK } from './actions';
 
 const initialState = {
     tasks: []

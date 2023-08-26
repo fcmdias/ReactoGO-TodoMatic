@@ -192,3 +192,57 @@ func UpdateTaskCategoriesHandler(w http.ResponseWriter, r *http.Request, col *mo
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(updateCategories)
 }
+
+func UpdateTaskHandler(w http.ResponseWriter, r *http.Request, col *mongo.Collection) {
+	log.Println("Received request: PUT /tasks/update")
+
+	w.Header().Set("Content-Type", "application/json")
+
+	// Extract task ID from URL parameters (assuming you're using a library like gorilla/mux)
+	vars := mux.Vars(r)
+	taskID, err := primitive.ObjectIDFromHex(vars["id"])
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Invalid task ID: %v", err), http.StatusBadRequest)
+		return
+	}
+
+	// Decode the updated task fields/values from the request body
+	var updates tasksmodels.Task
+	err = json.NewDecoder(r.Body).Decode(&updates)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error decoding request body: %v", err), http.StatusBadRequest)
+		return
+	}
+
+	log.Printf("updates %v\n", updates)
+
+	// Create a filter to match the task by ID
+	filter := bson.M{"_id": taskID}
+
+	// Prepare the update parameters (use $set to specify fields to update)
+	update := bson.M{
+		"$set": updates,
+	}
+
+	// Execute the update
+	result, err := col.UpdateOne(context.Background(), filter, update)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error updating task: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	if result.ModifiedCount == 0 {
+		http.Error(w, "No tasks were updated", http.StatusNotFound)
+		return
+	}
+
+	// Optionally, return the updated task to the client
+	var updatedTask tasksmodels.Task
+	err = col.FindOne(context.Background(), filter).Decode(&updatedTask)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error fetching updated task: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(updatedTask)
+}

@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import Sidebar from './Sidebar';
-import TaskList from '../features/tasks/TasksList';
-import TaskCreate from '../features/tasks/TaskCreate';
+import TaskList from '../features/tasks/List';
+import TaskCreate from '../features/tasks/Add';
 import CategoryCreate from '../features/categories/Add';
 import CategoryList from '../features/categories/List';
-
 
 const Dashboard = () => {
     const [section, setSection] = useState('home');
@@ -14,15 +13,15 @@ const Dashboard = () => {
             case 'tasks':
                 return (
                     <div>
-                        <TaskCreate />
                         <TaskList />
+                        <TaskCreate />
                     </div>
                 );
             case 'categories':
                 return (
                     <div>
-                        <CategoryCreate />
                         <CategoryList />
+                        <CategoryCreate />
                     </div>
                 );
             case 'home':

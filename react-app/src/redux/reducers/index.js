@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import taskReducer from '../../features/tasks/tasksSlice';
+import taskReducer from '../../features/tasks/slice';
 import categoryReducer from '../../features/categories/slice';
 
 export default combineReducers({

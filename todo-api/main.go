@@ -57,6 +57,9 @@ func main() {
 	router.HandleFunc("/tasks/create", func(w http.ResponseWriter, r *http.Request) {
 		taskshandler.CreateTaskHandler(w, r, tasksCollection)
 	}).Methods("POST")
+	router.HandleFunc("/tasks/{id}", func(w http.ResponseWriter, r *http.Request) {
+		taskshandler.UpdateTaskHandler(w, r, tasksCollection)
+	}).Methods("PUT")
 	router.HandleFunc("/tasks/{id}/complete", func(w http.ResponseWriter, r *http.Request) {
 		taskshandler.UpdateTaskStatusHandler(w, r, tasksCollection)
 	}).Methods("PATCH")
