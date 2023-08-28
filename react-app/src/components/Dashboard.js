@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import Sidebar from './Sidebar';
+import Login from '../features/auth/Login';
+import Register from '../features/auth/Register';
 import TaskList from '../features/tasks/List';
 import TaskCreate from '../features/tasks/Add';
 import CategoryCreate from '../features/categories/Add';
@@ -10,6 +12,11 @@ const Dashboard = () => {
 
     const renderSection = () => {
         switch (section) {
+            case 'login':
+                return <Login />;
+            case 'register':
+                return <Register />;
+
             case 'tasks':
                 return (
                     <div>
