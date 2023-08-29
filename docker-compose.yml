@@ -7,7 +7,6 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
-
   todo-api:
     build:
       context: ./todo-api
@@ -19,7 +18,17 @@ services:
     environment:
       MONGO_URI: mongodb://mongodb:27017/todo_db
     command: ["sh", "-c", "go mod tidy && go run main.go"]
-    
+  users-api:
+    build:
+      context: ./users-api
+    container_name: users-api
+    ports:
+      - "8000:8080"
+    depends_on:
+      - mongodb
+    environment:
+      MONGO_URI: mongodb://mongodb:27017/todo_db
+    command: ["sh", "-c", "go mod tidy && go run main.go"]
   react-app:
     build:
       context: ./react-app
@@ -29,11 +38,12 @@ services:
       - "3000:3000"
     depends_on:
       - todo-api
-
+      - users-api
   nginx:
     depends_on:
       - todo-api
       - react-app
+      - users-api
     restart: always
     build:
       dockerfile: Dockerfile

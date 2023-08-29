@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = "todo-api"; // replace with your API URL
+const API_URL = "todo-api";
 
 export const FETCH_TASKS = 'FETCH_TASKS';
 export const ADD_TASK = 'ADD_TASK';

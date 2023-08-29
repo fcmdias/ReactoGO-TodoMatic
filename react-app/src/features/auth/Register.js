@@ -1,7 +1,16 @@
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { registerUser } from './actions';
+
 
 const Register = () => {
+
+    const dispatch = useDispatch();
+    const isLoading = useSelector(state => state.auth.isLoading);
+    const error = useSelector(state => state.auth.error);
+
     const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -13,12 +22,14 @@ const Register = () => {
             return;
         }
 
-        // TODO: Implement registration logic here
+        dispatch(registerUser(username, email, password));
     };
 
     return (
         <div>
             <h2>Register</h2>
+            {isLoading && <p>Loading...</p>}
+            {/* {error && <p>{error}</p>} */}
             <form onSubmit={handleSubmit}>
                 <input 
                     type="text" 
@@ -31,6 +42,12 @@ const Register = () => {
                     value={password} 
                     onChange={e => setPassword(e.target.value)}
                     placeholder="Password"
+                />
+                <input 
+                    type="email" 
+                    value={email} 
+                    onChange={e => setEmail(e.target.value)}
+                    placeholder="Email"
                 />
                 <input 
                     type="password" 
