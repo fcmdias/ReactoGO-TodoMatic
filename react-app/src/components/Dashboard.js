@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import Login from '../features/auth/Login';
 import Register from '../features/auth/Register';
@@ -6,9 +6,21 @@ import TaskList from '../features/tasks/List';
 import TaskCreate from '../features/tasks/Add';
 import CategoryCreate from '../features/categories/Add';
 import CategoryList from '../features/categories/List';
+import { useSelector } from 'react-redux';
+
 
 const Dashboard = () => {
     const [section, setSection] = useState('home');
+    const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            setSection('tasks');
+        } else {
+            setSection('login');
+        }
+    }, [isAuthenticated]);
+
 
     const renderSection = () => {
         switch (section) {

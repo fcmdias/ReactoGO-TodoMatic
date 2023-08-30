@@ -9,9 +9,7 @@ const Sidebar = ({ setSection, currentSection }) => {
 
     const handleLogout = () => {
         // to make an API call to invalidate a session or token
-
-        // Clear local storage or cookies
-        localStorage.removeItem('userToken');
+        // TODO
 
         // Update the Redux state
         dispatch(logoutUser());

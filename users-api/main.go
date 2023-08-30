@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/bson"
@@ -117,9 +118,59 @@ func GetAllUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, users)
 }
 
+// JWT Secret, it's better to store this in an environment variable
+var jwtSecret = []byte("YOUR_JWT_SECRET")
+
+func Login(c *gin.Context) {
+	var loginVals struct {
+		Username string `json:"username" binding:"required"`
+		Password string `json:"password" binding:"required"`
+	}
+
+	// Bind the JSON body of the request to the loginVals struct
+	if err := c.BindJSON(&loginVals); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Please provide a valid username and password"})
+		return
+	}
+
+	// Retrieve the user based on the provided username
+	var user User
+	err := usersCollection.FindOne(context.TODO(), bson.M{
+		"username": loginVals.Username,
+	}).Decode(&user)
+
+	// Check for errors (e.g., user not found)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Incorrect credentials"})
+		return
+	}
+
+	// Compare the hashed password in the DB with the provided password
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginVals.Password)); err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Incorrect credentials"})
+		return
+	}
+
+	// If we reached this point, the user is authenticated, and we should generate a token
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"username": user.Username,
+		"email":    user.Email,
+		"exp":      time.Now().Add(72 * time.Hour).Unix(), // Token expires in 72 hours, you can adjust this
+	})
+
+	tokenStr, err := token.SignedString(jwtSecret)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not generate token"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"token": tokenStr})
+}
+
 func main() {
 	r := gin.Default()
 	r.POST("/register", Register)
+	r.POST("/login", Login)
 	r.GET("/users", GetAllUsers)
 	r.Run()
 }
