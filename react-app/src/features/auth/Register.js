@@ -26,12 +26,13 @@ const Register = () => {
 
     return (
         <div className="container mt-5">
-            <h2 className="mb-3">Register</h2>
-            {isLoading && <div className="alert alert-info">Loading...</div>}
-            {error && <div className="alert alert-danger">{error}</div>}
+            <h2 className="mb-4">Register</h2>
+            {isLoading && <div className="alert alert-info mb-4">Loading...</div>}
+            {error && <div className="alert alert-danger mb-4">{error}</div>}
             <form onSubmit={handleSubmit}>
-                <div className="form-group">
+                <div className="form-group mb-3">
                     <input 
+                        id="username"
                         type="text" 
                         className="form-control" 
                         value={username} 
@@ -39,8 +40,19 @@ const Register = () => {
                         placeholder="Username"
                     />
                 </div>
-                <div className="form-group">
+                <div className="form-group mb-3">
                     <input 
+                        id="email"
+                        type="email" 
+                        className="form-control"
+                        value={email} 
+                        onChange={e => setEmail(e.target.value)}
+                        placeholder="Email"
+                    />
+                </div>
+                <div className="form-group mb-3">
+                    <input 
+                        id="password"
                         type="password" 
                         className="form-control"
                         value={password} 
@@ -48,22 +60,14 @@ const Register = () => {
                         placeholder="Password"
                     />
                 </div>
-                <div className="form-group">
+                <div className="form-group mb-3">
                     <input 
+                        id="confirmPassword"
                         type="password" 
                         className="form-control"
                         value={confirmPassword} 
                         onChange={e => setConfirmPassword(e.target.value)}
                         placeholder="Confirm Password"
-                    />
-                </div>
-                <div className="form-group">
-                    <input 
-                        type="email" 
-                        className="form-control"
-                        value={email} 
-                        onChange={e => setEmail(e.target.value)}
-                        placeholder="Email"
                     />
                 </div>
                 <button type="submit" className="btn btn-primary">Register</button>

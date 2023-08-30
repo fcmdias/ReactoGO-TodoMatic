@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux';
 
 
 const Dashboard = () => {
-    const [section, setSection] = useState('home');
+    const [section, setSection] = useState('');
     const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
 
     useEffect(() => {
@@ -43,7 +43,6 @@ const Dashboard = () => {
                         <CategoryCreate />
                     </div>
                 );
-            case 'home':
             default:
                 return <h2>Welcome to the Dashboard</h2>;
         }
