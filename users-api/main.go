@@ -26,6 +26,9 @@ type User struct {
 var usersCollection *mongo.Collection
 var mongoURI = ""
 
+// JWT Secret, it's better to store this in an environment variable
+var jwtSecret = []byte("YOUR_JWT_SECRET")
+
 func init() {
 	mongoURI = os.Getenv("MONGO_URI")
 	if mongoURI == "" {
@@ -118,9 +121,6 @@ func GetAllUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, users)
 }
 
-// JWT Secret, it's better to store this in an environment variable
-var jwtSecret = []byte("YOUR_JWT_SECRET")
-
 func Login(c *gin.Context) {
 	var loginVals struct {
 		Username string `json:"username" binding:"required"`
@@ -151,18 +151,22 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	// If we reached this point, the user is authenticated, and we should generate a token
+	// ====================================================================================
+	// Generating token
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"user_id":  user.ID,
 		"username": user.Username,
-		"email":    user.Email,
-		"exp":      time.Now().Add(72 * time.Hour).Unix(), // Token expires in 72 hours, you can adjust this
+		"exp":      time.Now().Add(time.Hour * 72).Unix(), // Token expiration
 	})
 
 	tokenStr, err := token.SignedString(jwtSecret)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not generate token"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
 		return
 	}
+
+	// ====================================================================================
 
 	c.JSON(http.StatusOK, gin.H{"token": tokenStr})
 }

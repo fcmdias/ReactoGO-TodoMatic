@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 const API_URL = "todo-api";
 
@@ -14,6 +15,8 @@ export const fetchTasks = () => async dispatch => {
 };
 
 export const addTask = (task) => async dispatch => {
+    const token = Cookies.get('auth_token');
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     const response = await axios.post(`${API_URL}/tasks/create`, task);
     dispatch({ type: ADD_TASK, payload: response.data });
 };

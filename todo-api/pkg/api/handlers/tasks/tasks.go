@@ -6,14 +6,18 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
+	"github.com/dgrijalva/jwt-go"
 	tasksmodels "github.com/fcmdias/ReactoGO-TodoMatic/todo-api/pkg/database/models/tasks"
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
+
+var jwtSecret = []byte("YOUR_JWT_SECRET")
 
 func CreateTaskHandler(w http.ResponseWriter, r *http.Request, col *mongo.Collection) {
 
@@ -28,9 +32,56 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request, col *mongo.Collec
 		return
 	}
 
+	// ===========================================================================
+	// TOKEN
+
+	authHeader := r.Header.Get("Authorization")
+	if authHeader == "" || !strings.HasPrefix(authHeader, "Bearer ") {
+		http.Error(w, "Missing or invalid Authorization header", http.StatusUnauthorized)
+		return
+	}
+	parts := strings.Split(authHeader, " ")
+	if len(parts) != 2 || parts[0] != "Bearer" {
+		http.Error(w, "invalid Authorization header", http.StatusUnauthorized)
+		return
+	}
+	tokenStr := parts[1]
+	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+		}
+		return jwtSecret, nil
+	})
+
+	if err != nil {
+		http.Error(w, fmt.Sprintf("error parsing token: %v", err), http.StatusBadRequest)
+		return
+	}
+	if !token.Valid {
+		http.Error(w, fmt.Sprintln("error: Invalid Token"), http.StatusBadRequest)
+		return
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if ok && token.Valid {
+		if userIDStr, ok := claims["user_id"].(string); ok {
+			userID, err := primitive.ObjectIDFromHex(userIDStr)
+			if err != nil {
+				http.Error(w, fmt.Sprintf("Error Invalid token claims: %v", err), http.StatusBadRequest)
+				return
+			}
+			task.CreatedBy = userID
+		}
+	} else {
+		http.Error(w, fmt.Sprintf("Error Invalid token claims"), http.StatusBadRequest)
+		return
+	}
+
+	// ===========================================================================
+
 	task.ID = primitive.NewObjectID()
 	task.CreatedAt = time.Now()
-	task.Completed = false // Set default value
+	task.Completed = false
 	task.Categories = []primitive.ObjectID{}
 
 	_, err = col.InsertOne(context.Background(), task)
