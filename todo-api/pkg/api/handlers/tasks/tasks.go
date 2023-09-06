@@ -84,10 +84,9 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request, col *mongo.Collec
 	task.Completed = false
 	task.Categories = []primitive.ObjectID{}
 
-	_, err = col.InsertOne(context.Background(), task)
+	err = AddTask(col, task)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error inserting task: %v", err), http.StatusInternalServerError)
-		return
 	}
 
 	w.WriteHeader(http.StatusCreated)
@@ -99,29 +98,7 @@ func GetTasksHandler(w http.ResponseWriter, r *http.Request, col *mongo.Collecti
 
 	w.Header().Set("Content-Type", "application/json")
 
-	filter := bson.D{}
-	cursor, err := col.Find(context.TODO(), filter)
-	if err != nil {
-		panic(err)
-	}
-
-	var results []tasksmodels.Task
-	if err = cursor.All(context.TODO(), &results); err != nil {
-		panic(err)
-	}
-
-	var tasks []tasksmodels.Task
-	for _, result := range results {
-		cursor.Decode(&result)
-		// output, err := json.MarshalIndent(result, "", "    ")
-		// if err != nil {
-		// 	panic(err)
-		// }
-		if result.Categories == nil {
-			result.Categories = []primitive.ObjectID{}
-		}
-		tasks = append(tasks, result)
-	}
+	tasks := GetTasks(col)
 
 	responseB, err := json.Marshal(tasks)
 	if err != nil {
@@ -144,17 +121,6 @@ func UpdateTaskStatusHandler(w http.ResponseWriter, r *http.Request, col *mongo.
 	}
 
 	log.Printf("Received request: PATCH /tasks/{%v}/complete\n", id)
-
-	// var updateData struct {
-	// 	Completed bool `json:"completed"`
-	// }
-
-	// err := json.NewDecoder(r.Body).Decode(&updateData)
-	// if err != nil {
-	// 	log.Println(fmt.Sprintf("Error decoding request body: %v", err))
-	// 	http.Error(w, fmt.Sprintf("Error decoding request body: %v", err), http.StatusBadRequest)
-	// 	return
-	// }
 
 	_, err = col.UpdateOne(
 		context.Background(),
@@ -188,16 +154,8 @@ func DeleteTaskHandler(w http.ResponseWriter, r *http.Request, col *mongo.Collec
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("DeleteOne removed %v document(s)\n", result.DeletedCount)
+	log.Printf("DeleteOne removed %v document(s)\n", result.DeletedCount)
 
-	// result, err := tasksCollection.DeleteOne(context.Background(), bson.M{"_id": taskID})
-	// if err != nil {
-	// 	log.Println(fmt.Sprintf("Error deleting task: %v", err))
-	// 	http.Error(w, fmt.Sprintf("Error deleting task: %v", err), http.StatusInternalServerError)
-	// 	return
-	// }
-
-	// log.Println("deleted", result.DeletedCount)
 	w.WriteHeader(http.StatusOK)
 }
 
