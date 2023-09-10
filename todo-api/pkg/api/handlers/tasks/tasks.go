@@ -25,7 +25,7 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request, col *mongo.Collec
 
 	w.Header().Set("Content-Type", "application/json")
 
-	var task tasksmodels.Task
+	var task TaskWithCreator
 	err := json.NewDecoder(r.Body).Decode(&task)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error decoding request body: %v", err), http.StatusBadRequest)
@@ -72,6 +72,9 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request, col *mongo.Collec
 			}
 			task.CreatedBy = userID
 		}
+		if username, ok := claims["username"].(string); ok {
+			task.Creator.Username = username
+		}
 	} else {
 		http.Error(w, fmt.Sprintf("Error Invalid token claims"), http.StatusBadRequest)
 		return
@@ -84,7 +87,7 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request, col *mongo.Collec
 	task.Completed = false
 	task.Categories = []primitive.ObjectID{}
 
-	err = AddTask(col, task)
+	err = AddTask(col, TaskWithCreatorToTask(task))
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error inserting task: %v", err), http.StatusInternalServerError)
 	}

@@ -54,3 +54,14 @@ func GetTasks(col *mongo.Collection) []TaskWithCreator {
 
 	return tasks
 }
+
+func TaskWithCreatorToTask(t TaskWithCreator) tasksmodels.Task {
+	return tasksmodels.Task{
+		ID:         t.ID,
+		CreatedBy:  t.CreatedBy,
+		Title:      t.Title,
+		Categories: t.Categories,
+		Completed:  t.Completed,
+		CreatedAt:  t.CreatedAt,
+	}
+}
