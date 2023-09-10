@@ -99,6 +99,9 @@ func GetTasksHandler(w http.ResponseWriter, r *http.Request, col *mongo.Collecti
 	w.Header().Set("Content-Type", "application/json")
 
 	tasks := GetTasks(col)
+	// if err != nil {
+	// 	http.Error(w, fmt.Sprintf("Error getting tasks: %v", err), http.StatusInternalServerError)
+	// }
 
 	responseB, err := json.Marshal(tasks)
 	if err != nil {

@@ -68,7 +68,8 @@ const TaskItem = ({ task }) => {
             ) : (
                 <>
                     <div>
-                        {task.title} <br />
+                        <small> {task.Creator.Username} </small>
+                        <p>{task.title}</p>
                         <small className="text-muted">{task.categories.map(catId => allCategories.find(category => category.id === catId)?.title).join(', ')}</small>
                     </div>
                     <div>

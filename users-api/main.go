@@ -51,7 +51,7 @@ func init() {
 	log.Println("Connected to Database.")
 
 	db := client.Database("todo_db")
-	usersCollection = db.Collection("tasks")
+	usersCollection = db.Collection("users")
 
 }
 

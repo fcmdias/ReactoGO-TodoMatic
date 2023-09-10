@@ -2,10 +2,11 @@ package tasks
 
 import (
 	"context"
+	"fmt"
+	"time"
 
 	tasksmodels "github.com/fcmdias/ReactoGO-TodoMatic/todo-api/pkg/database/models/tasks"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -14,26 +15,42 @@ func AddTask(col *mongo.Collection, task tasksmodels.Task) error {
 	return err
 }
 
-func GetTasks(col *mongo.Collection) []tasksmodels.Task {
-	filter := bson.D{}
-	cursor, err := col.Find(context.TODO(), filter)
+type TaskWithCreator struct {
+	tasksmodels.Task `bson:",inline"`
+	Creator          struct {
+		Username string `bson:"username"`
+	} `bson:"creator"`
+}
+
+func GetTasks(col *mongo.Collection) []TaskWithCreator {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	// Aggregation pipeline to fetch tasks with their creators
+	pipeline := mongo.Pipeline{
+		{{"$lookup", bson.D{
+			{"from", "users"},
+			{"localField", "created_by"},
+			{"foreignField", "_id"},
+			{"as", "creator"},
+		}}},
+		{{"$unwind", "$creator"}},
+	}
+
+	cursor, err := col.Aggregate(ctx, pipeline)
 	if err != nil {
 		panic(err)
 	}
+	defer cursor.Close(ctx)
 
-	var results []tasksmodels.Task
-	if err = cursor.All(context.TODO(), &results); err != nil {
+	var tasks []TaskWithCreator
+
+	if err = cursor.All(ctx, &tasks); err != nil {
 		panic(err)
 	}
 
-	var tasks []tasksmodels.Task
-	for _, result := range results {
-		cursor.Decode(&result)
-		if result.Categories == nil {
-			result.Categories = []primitive.ObjectID{}
-		}
-		tasks = append(tasks, result)
-	}
+	fmt.Println(tasks)
 
 	return tasks
 }
