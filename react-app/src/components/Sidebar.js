@@ -19,21 +19,27 @@ const Sidebar = ({ setSection, currentSection }) => {
     return (
         <div className="nav nav-pills flex-column p-3">
         
-            <button 
-                className={`btn ${currentSection === 'tasks' ? 'btn-primary' : 'btn-outline-primary'} w-100 mb-2`}
-                onClick={() => setSection('tasks')}
-            >
-                Tasks
-            </button>
 
-            <button 
-                className={`btn ${currentSection === 'categories' ? 'btn-primary' : 'btn-outline-primary'} w-100 mb-2`}
-                onClick={() => setSection('categories')}
-            >
-                Categories
-            </button>
+            {isAuthenticated ? (
+                <>
+                    <button 
+                        className={`btn ${currentSection === 'tasks' ? 'btn-primary' : 'btn-outline-primary'} w-100 mb-2`}
+                        onClick={() => setSection('tasks')}
+                    >
+                        Tasks
+                    </button>
 
-            <hr className="my-3" />
+                    <button 
+                        className={`btn ${currentSection === 'categories' ? 'btn-primary' : 'btn-outline-primary'} w-100 mb-2`}
+                        onClick={() => setSection('categories')}
+                    >
+                        Categories
+                    </button>
+
+
+                    <hr className="my-3" />
+                </>
+            ): "" }
 
             {isAuthenticated ? (
                 <button 

@@ -12,9 +12,9 @@ function App() {
     const isTokenExpired = (token) => {
       try {
           const { exp } = JSON.parse(atob(token.split('.')[1]));
-          return exp < (Date.now() / 1000); // Convert current time to Unix timestamp
+          return exp < (Date.now() / 1000);
       } catch (e) {
-          return true; // If there's an error, consider the token invalid
+          return true;
       }
   }
     const token = Cookies.get('auth_token');
