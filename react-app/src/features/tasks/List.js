@@ -15,9 +15,9 @@ const TaskList = () => {
 
     return (
         <div className="list-group mt-3">
-            {tasks.map(task => (
-                <TaskItem key={task.id} task={task} />  // Use TaskItem component here
-            ))}
+            {tasks && tasks.length > 0 ? tasks.map(task => (
+                <TaskItem key={task.id} task={task} /> 
+            )): 'No Tasks Available.'}
         </div>
     );
 };

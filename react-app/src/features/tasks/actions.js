@@ -11,7 +11,9 @@ export const COMPLETE_TASK_SUCCESS = 'COMPLETE_TASK_SUCCESS';
 
 export const fetchTasks = () => async dispatch => {
     const response = await axios.get(`${API_URL}/tasks`);
-    dispatch({ type: FETCH_TASKS, payload: response.data });
+    if (response.data !== null) {
+        dispatch({ type: FETCH_TASKS, payload: response.data });
+    }
 };
 
 export const addTask = (task) => async dispatch => {

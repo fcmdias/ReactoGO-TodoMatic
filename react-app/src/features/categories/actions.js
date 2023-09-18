@@ -9,7 +9,9 @@ export const UPDATE_CATEGORY = 'UPDATE_CATEGORY';
 
 export const fetchCategories = () => async dispatch => {
     const response = await axios.get(`${API_URL}/categories`);
-    dispatch({ type: FETCH_CATEGORIES, payload: response.data });
+    if (response.data !== null) {
+        dispatch({ type: FETCH_CATEGORIES, payload: response.data });
+    } 
 };
 
 export const addCategory = (category) => async dispatch => {
