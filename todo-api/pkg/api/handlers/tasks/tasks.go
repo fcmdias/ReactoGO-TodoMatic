@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	tasksmodels "github.com/fcmdias/ReactoGO-TodoMatic/todo-api/pkg/database/models/tasks"
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -188,7 +187,7 @@ func UpdateTaskHandler(w http.ResponseWriter, r *http.Request, col *mongo.Collec
 	}
 
 	// Decode the updated task fields/values from the request body
-	var updates tasksmodels.Task
+	var updates TaskWithCreator
 	err = json.NewDecoder(r.Body).Decode(&updates)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error decoding request body: %v", err), http.StatusBadRequest)
@@ -218,12 +217,7 @@ func UpdateTaskHandler(w http.ResponseWriter, r *http.Request, col *mongo.Collec
 	}
 
 	// Optionally, return the updated task to the client
-	var updatedTask tasksmodels.Task
-	err = col.FindOne(context.Background(), filter).Decode(&updatedTask)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Error fetching updated task: %v", err), http.StatusInternalServerError)
-		return
-	}
+	updatedTask := GetTaskByID(col, taskID)
 
 	json.NewEncoder(w).Encode(updatedTask)
 }
@@ -275,4 +269,47 @@ func getUser(r *http.Request) (user User, err error) {
 	}
 
 	return user, nil
+}
+
+func GetTaskByID(col *mongo.Collection, taskID primitive.ObjectID) *TaskWithCreator {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	// Aggregation pipeline to fetch a specific task with its creator
+	pipeline := mongo.Pipeline{
+		{
+			{"$match", bson.D{
+				{"_id", taskID},
+			}},
+		},
+		{
+			{"$lookup", bson.D{
+				{"from", "users"},
+				{"localField", "created_by"},
+				{"foreignField", "_id"},
+				{"as", "creator"},
+			}},
+		},
+		{
+			{"$unwind", "$creator"},
+		},
+	}
+
+	cursor, err := col.Aggregate(ctx, pipeline)
+	if err != nil {
+		panic(err)
+	}
+	defer cursor.Close(ctx)
+
+	var task TaskWithCreator
+	if cursor.Next(ctx) {
+		if err := cursor.Decode(&task); err != nil {
+			panic(err)
+		}
+	}
+
+	fmt.Println(task)
+
+	return &task
 }
