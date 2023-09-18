@@ -12,7 +12,10 @@ const CategoryList = () => {
 
     return (
         <div className="list-group">
-            {categories.map(category => (
+        {(!categories || categories.length === 0) ? (
+            <div className="list-group-item">No categories available.</div>
+            ) : (
+            categories.map(category => (
                 <div key={category.id} className="list-group-item d-flex justify-content-between">
                     <span>{category.title}</span>
                     <button 
@@ -22,7 +25,10 @@ const CategoryList = () => {
                         Delete
                     </button>
                 </div>
-            ))}
+            ))
+        )}
+
+
         </div>
     );
 };

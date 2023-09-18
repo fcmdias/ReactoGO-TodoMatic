@@ -45,7 +45,8 @@ const TaskItem = ({ task }) => {
                             onChange={e => setEditedTitle(e.target.value)}
                         />
                         {/* Category checkboxes */}
-                        {allCategories.map(category => (
+                        {allCategories && allCategories.length > 0
+                        ? allCategories.map(category => (
                             <div key={category.id} className="form-check">
                                 <input 
                                     className="form-check-input" 
@@ -58,7 +59,7 @@ const TaskItem = ({ task }) => {
                                     {category.title}
                                 </label>
                             </div>
-                        ))}
+                        )): ''}
                     </div>
                     <div>
                         <button className="btn btn-success btn-sm me-2" onClick={handleUpdate}>Save</button>
@@ -70,7 +71,15 @@ const TaskItem = ({ task }) => {
                     <div>
                         <small> {task.Creator.Username} </small>
                         <p>{task.title}</p>
-                        <small className="text-muted">{task.categories.map(catId => allCategories.find(category => category.id === catId)?.title).join(', ')}</small>
+                        <small className="text-muted">
+                            {task.categories && task.categories.length > 0
+                                ? task.categories
+                                    .map(catId => 
+                                        allCategories && allCategories.length > 0 ? allCategories.find(category => category.id === catId)?.title || 'Unknown' : 'Unknown'
+                                    )
+                                    .join(', ')
+                                : ''}
+                        </small>
                     </div>
                     <div>
                         {task.completed ? (
