@@ -59,6 +59,7 @@ func TaskWithCreatorToTask(t TaskWithCreator) tasksmodels.Task {
 	return tasksmodels.Task{
 		ID:         t.ID,
 		CreatedBy:  t.CreatedBy,
+		Recurrence: t.Recurrence,
 		Title:      t.Title,
 		Categories: t.Categories,
 		Completed:  t.Completed,

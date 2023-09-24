@@ -35,6 +35,47 @@ export const updateTask = (id, task) => async dispatch => {
 
 export const completeTask = (id) => {
     return async dispatch => {
+
+        try {
+
+            const eventData = {
+                TaskID: id,
+                Type: "COMPLETED"
+            };
+
+            const token = Cookies.get('auth_token');
+        
+            return fetch(`${API_URL}/events/create`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,                
+                },
+                body: JSON.stringify(eventData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .catch(error => {
+                console.error("There was a problem with the fetch operation:", error.message);
+            });
+        
+        
+
+
+            
+        } catch(error) {
+            dispatch({
+                type: 'COMPLETE_TASK_FAILURE',
+                payload: error
+            });
+        }
+
+
+
         try {
             const response = await axios.patch(`${API_URL}/tasks/${id}/complete`, {
                 completed: true

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	categorieshandler "github.com/fcmdias/ReactoGO-TodoMatic/todo-api/pkg/api/handlers/categories"
+	eventshandler "github.com/fcmdias/ReactoGO-TodoMatic/todo-api/pkg/api/handlers/events"
 	taskshandler "github.com/fcmdias/ReactoGO-TodoMatic/todo-api/pkg/api/handlers/tasks"
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -16,6 +17,7 @@ import (
 
 var tasksCollection *mongo.Collection
 var categoriesCollection *mongo.Collection
+var eventsCollection *mongo.Collection
 
 var mongoURI = ""
 
@@ -45,6 +47,7 @@ func init() {
 	db := client.Database("todo_db")
 	tasksCollection = db.Collection("tasks")
 	categoriesCollection = db.Collection("categories")
+	eventsCollection = db.Collection("events")
 }
 
 func main() {
@@ -52,7 +55,7 @@ func main() {
 	router := mux.NewRouter()
 
 	// ================================================================================
-	// tasks handlers.
+	// Tasks handlers.
 
 	router.HandleFunc("/tasks/create", func(w http.ResponseWriter, r *http.Request) {
 		taskshandler.CreateTaskHandler(w, r, tasksCollection)
@@ -74,7 +77,7 @@ func main() {
 	}).Methods("GET")
 
 	// ================================================================================
-	// categories handlers.
+	// Categories handlers.
 
 	router.HandleFunc("/categories/create", func(w http.ResponseWriter, r *http.Request) {
 		categorieshandler.CreateCategoryHandler(w, r, categoriesCollection)
@@ -85,6 +88,23 @@ func main() {
 	router.HandleFunc("/categories", func(w http.ResponseWriter, r *http.Request) {
 		categorieshandler.GetCategoriesHandler(w, r, categoriesCollection)
 	}).Methods("GET")
+
+	// ================================================================================
+	// Events handlers.
+
+	router.HandleFunc("/events/create", func(w http.ResponseWriter, r *http.Request) {
+		eventshandler.CreateEventHandler(w, r, eventsCollection)
+	}).Methods("POST")
+
+	// router.HandleFunc("/categories/{id}", func(w http.ResponseWriter, r *http.Request) {
+	// 	categorieshandler.DeleteCategoryHandler(w, r, categoriesCollection)
+	// }).Methods("DELETE")
+	router.HandleFunc("/events", func(w http.ResponseWriter, r *http.Request) {
+		eventshandler.GetEventsHandler(w, r, eventsCollection)
+	}).Methods("GET")
+
+	// ================================================================================
+	// Service starting.
 
 	port := "8080"
 	log.Printf("Server listening on port %s\n", port)

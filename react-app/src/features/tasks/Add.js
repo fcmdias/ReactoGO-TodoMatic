@@ -4,16 +4,23 @@ import { addTask } from './actions';
 
 const TaskCreate = () => {
     const [taskTitle, setTaskTitle] = useState('');
-    const [showForm, setShowForm] = useState(false);  // New state for toggling form visibility
+    const [recurrence, setRecurrence] = useState('none');
+    const [customRecurrence, setCustomRecurrence] = useState('');
+    const [showForm, setShowForm] = useState(false);
     const dispatch = useDispatch();
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
         if (taskTitle.trim()) {
-            dispatch(addTask({ title: taskTitle }));
-            setTaskTitle('');  // Clear the input field after submitting
-            setShowForm(false);  // Hide the form after submitting
+            dispatch(addTask({
+                title: taskTitle,
+                recurrence: recurrence === 'custom' ? customRecurrence : recurrence
+            }));
+            setTaskTitle('');
+            setRecurrence('none');
+            setCustomRecurrence('');
+            setShowForm(false);
         }
     };
 
@@ -30,6 +37,25 @@ const TaskCreate = () => {
                             placeholder="Enter new task..."
                         />
                     </div>
+                    <div className="mb-3">
+                        <select value={recurrence} onChange={e => setRecurrence(e.target.value)}>
+                            <option value="none">No Recurrence</option>
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+                    {recurrence === 'custom' && (
+                        <div className="mb-3">
+                            <input 
+                                type="text" 
+                                className="form-control"
+                                value={customRecurrence} 
+                                onChange={e => setCustomRecurrence(e.target.value)}
+                                placeholder="Enter custom interval..."
+                            />
+                        </div>
+                    )}
                     <button type="submit" className="btn btn-primary me-2">Add Task</button>
                     <button type="button" className="btn btn-secondary" onClick={() => setShowForm(false)}>Cancel</button>
                 </form>

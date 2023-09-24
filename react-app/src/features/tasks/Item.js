@@ -7,7 +7,9 @@ const TaskItem = ({ task }) => {
     const allCategories = useSelector(state => state.categories.categories);
     const [isEditing, setIsEditing] = useState(false);
     const [editedTitle, setEditedTitle] = useState(task.title);
-    const [editedCategories, setEditedCategories] = useState([...task.categories]); // Clone initial categories
+    const [editedCategories, setEditedCategories] = useState([...task.categories]);
+    const [editedRecurrence, setEditedRecurrence] = useState(task.recurrence || 'none');
+    const [customRecurrence, setCustomRecurrence] = useState(task.customRecurrence || '');
 
     const handleCategoryChange = (catId, isChecked) => {
         if (isChecked && !editedCategories.includes(catId)) {
@@ -22,7 +24,8 @@ const TaskItem = ({ task }) => {
             const updatedTask = {
                 ...task,
                 title: editedTitle,
-                categories: editedCategories
+                categories: editedCategories,
+                recurrence: editedRecurrence === 'custom' ? customRecurrence : editedRecurrence 
             };
             dispatch(updateTask(task.id, updatedTask));
             setIsEditing(false);
@@ -44,9 +47,26 @@ const TaskItem = ({ task }) => {
                             value={editedTitle}
                             onChange={e => setEditedTitle(e.target.value)}
                         />
-                        {/* Category checkboxes */}
-                        {allCategories && allCategories.length > 0
-                        ? allCategories.map(category => (
+                        <div className="mb-2">
+                            <select value={editedRecurrence} onChange={e => setEditedRecurrence(e.target.value)}>
+                                <option value="none">No Recurrence</option>
+                                <option value="daily">Daily</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="custom">Custom</option>
+                            </select>
+                        </div>
+                        {editedRecurrence === 'custom' && (
+                            <div className="mb-2">
+                                <input 
+                                    type="text" 
+                                    className="form-control"
+                                    value={customRecurrence} 
+                                    onChange={e => setCustomRecurrence(e.target.value)}
+                                    placeholder="Enter custom interval..."
+                                />
+                            </div>
+                        )}
+                        {allCategories && allCategories.map(category => (
                             <div key={category.id} className="form-check">
                                 <input 
                                     className="form-check-input" 
@@ -59,7 +79,7 @@ const TaskItem = ({ task }) => {
                                     {category.title}
                                 </label>
                             </div>
-                        )): ''}
+                        ))}
                     </div>
                     <div>
                         <button className="btn btn-success btn-sm me-2" onClick={handleUpdate}>Save</button>
@@ -72,13 +92,13 @@ const TaskItem = ({ task }) => {
                         <small> {task.Creator.Username} </small>
                         <p>{task.title}</p>
                         <small className="text-muted">
-                            {task.categories && task.categories.length > 0
-                                ? task.categories
-                                    .map(catId => 
-                                        allCategories && allCategories.length > 0 ? allCategories.find(category => category.id === catId)?.title || 'Unknown' : 'Unknown'
-                                    )
-                                    .join(', ')
-                                : ''}
+                            {task.categories && task.categories
+                                .map(catId => 
+                                    allCategories ? allCategories.find(category => category.id === catId)?.title || 'Unknown' : 'Unknown'
+                                )
+                                .join(', ')
+                            }
+                            {task.recurrence && <span> (Recurs: {task.recurrence === 'custom' ? task.customRecurrence : task.recurrence})</span>}
                         </small>
                     </div>
                     <div>
