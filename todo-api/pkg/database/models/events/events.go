@@ -16,9 +16,9 @@ const (
 )
 
 type Event struct {
-	ID        primitive.ObjectID
-	TaskID    primitive.ObjectID
-	CreatedBy primitive.ObjectID
-	CreatedAt time.Time
-	Type      EventType
+	ID        primitive.ObjectID `json:"id"" bson:"_id"`
+	TaskID    primitive.ObjectID `json:"taskID" bson:"taskID"`
+	CreatedBy primitive.ObjectID `json:"createdBy" bson:"createdBy"`
+	CreatedAt time.Time          `json:"createdAt" bson:"createdAt"`
+	Type      EventType          `json:"type" bson:"type"`
 }

@@ -2,11 +2,13 @@ package tasks
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"time"
 
+	eventsmodels "github.com/fcmdias/ReactoGO-TodoMatic/todo-api/pkg/database/models/events"
 	tasksmodels "github.com/fcmdias/ReactoGO-TodoMatic/todo-api/pkg/database/models/tasks"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -22,7 +24,7 @@ type TaskWithCreator struct {
 	} `bson:"creator"`
 }
 
-func GetTasks(col *mongo.Collection) []TaskWithCreator {
+func GetTasks(col, eventsCollection *mongo.Collection) []TaskWithCreator {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -50,9 +52,58 @@ func GetTasks(col *mongo.Collection) []TaskWithCreator {
 		panic(err)
 	}
 
-	fmt.Println(tasks)
+	// =======================================================================
+	// Fetch events for the tasks
 
-	return tasks
+	eventsMap := make(map[primitive.ObjectID][]eventsmodels.Event)
+
+	for _, task := range tasks {
+		var filter bson.M
+
+		switch task.Recurrence {
+		case tasksmodels.RecurrenceDaily:
+			filter = bson.M{"taskID": task.ID, "createdAt": bson.M{"$gte": time.Now().Truncate(24 * time.Hour)}}
+		case tasksmodels.RecurrenceWeekly:
+			weekAgo := time.Now().AddDate(0, 0, -7)
+			filter = bson.M{"taskID": task.ID, "createdAt": bson.M{"$gte": weekAgo}}
+		default:
+			filter = bson.M{"taskID": task.ID}
+		}
+
+		var events []eventsmodels.Event
+		cursor, err := eventsCollection.Find(ctx, filter)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+
+		for cursor.Next(ctx) {
+			var event eventsmodels.Event
+			if err := cursor.Decode(&event); err != nil {
+				log.Println(err)
+				continue
+			}
+			events = append(events, event)
+		}
+
+		cursor.Close(ctx)
+
+		eventsMap[task.ID] = events
+	}
+
+	log.Println("events map: ", eventsMap)
+	var response []TaskWithCreator
+
+	for _, task := range tasks {
+		if v, ok := eventsMap[task.ID]; ok {
+			if len(v) > 0 {
+				continue
+			}
+		}
+		response = append(response, task)
+	}
+
+	return response
 }
 
 func TaskWithCreatorToTask(t TaskWithCreator) tasksmodels.Task {

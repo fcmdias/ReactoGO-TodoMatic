@@ -9,8 +9,9 @@ import (
 type RecurrenceType string
 
 const (
-	RecurrenceNone  RecurrenceType = "none"
-	RecurrenceDaily RecurrenceType = "daily"
+	RecurrenceNone   RecurrenceType = "none"
+	RecurrenceDaily  RecurrenceType = "daily"
+	RecurrenceWeekly RecurrenceType = "weekly"
 )
 
 type Task struct {

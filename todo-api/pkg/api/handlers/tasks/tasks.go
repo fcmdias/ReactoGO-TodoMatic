@@ -60,12 +60,12 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request, col *mongo.Collec
 	json.NewEncoder(w).Encode(task)
 }
 
-func GetTasksHandler(w http.ResponseWriter, r *http.Request, col *mongo.Collection) {
+func GetTasksHandler(w http.ResponseWriter, r *http.Request, col, eventsCollection *mongo.Collection) {
 	log.Println("Received request: GET /tasks")
 
 	w.Header().Set("Content-Type", "application/json")
 
-	tasks := GetTasks(col)
+	tasks := GetTasks(col, eventsCollection)
 	// if err != nil {
 	// 	http.Error(w, fmt.Sprintf("Error getting tasks: %v", err), http.StatusInternalServerError)
 	// }

@@ -73,7 +73,7 @@ func main() {
 		taskshandler.DeleteTaskHandler(w, r, tasksCollection)
 	}).Methods("DELETE")
 	router.HandleFunc("/tasks", func(w http.ResponseWriter, r *http.Request) {
-		taskshandler.GetTasksHandler(w, r, tasksCollection)
+		taskshandler.GetTasksHandler(w, r, tasksCollection, eventsCollection)
 	}).Methods("GET")
 
 	// ================================================================================
