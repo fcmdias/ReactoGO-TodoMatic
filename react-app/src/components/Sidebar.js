@@ -23,6 +23,12 @@ const Sidebar = ({ setSection, currentSection }) => {
             {isAuthenticated ? (
                 <>
                     <button 
+                        className={`btn ${currentSection === 'users' ? 'btn-primary' : 'btn-outline-primary'} w-100 mb-2`}
+                        onClick={() => setSection('users')}
+                    >
+                        Users
+                    </button>
+                    <button 
                         className={`btn ${currentSection === 'tasks' ? 'btn-primary' : 'btn-outline-primary'} w-100 mb-2`}
                         onClick={() => setSection('tasks')}
                     >

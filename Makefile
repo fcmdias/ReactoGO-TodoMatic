@@ -12,3 +12,7 @@ rebuild-react:
 rebuild-todo:
 	docker-compose build todo-api
 	docker-compose up -d todo-api
+
+rebuild-users:
+	docker-compose build users-api
+	docker-compose up -d users-api

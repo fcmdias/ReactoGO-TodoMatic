@@ -17,10 +17,10 @@ import (
 )
 
 type User struct {
-	ID       string `bson:"_id,omitempty"`
-	Username string `bson:"username" validate:"required"`
+	ID       string `json:"id" bson:"_id,omitempty"`
+	Username string `json:"username" bson:"username" validate:"required"`
 	Password string `bson:"password" validate:"required"`
-	Email    string `bson:"email" validate:"required,email"`
+	Email    string `json:"email" bson:"email" validate:"required,email"`
 }
 
 var usersCollection *mongo.Collection
@@ -99,14 +99,17 @@ func Register(c *gin.Context) {
 func GetAllUsers(c *gin.Context) {
 	var users []User
 
-	cursor, err := usersCollection.Find(context.TODO(), bson.M{})
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	cursor, err := usersCollection.Find(ctx, bson.M{})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch users"})
 		return
 	}
-	defer cursor.Close(context.TODO())
+	defer cursor.Close(ctx)
 
-	for cursor.Next(context.TODO()) {
+	for cursor.Next(ctx) {
 		var user User
 		cursor.Decode(&user)
 		user.Password = ""

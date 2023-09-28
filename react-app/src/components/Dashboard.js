@@ -6,6 +6,7 @@ import TaskList from '../features/tasks/List';
 import TaskCreate from '../features/tasks/Add';
 import CategoryCreate from '../features/categories/Add';
 import CategoryList from '../features/categories/List';
+import UserList from '../features/users/List';
 import { useSelector } from 'react-redux';
 
 
@@ -34,6 +35,12 @@ const Dashboard = () => {
                     <div>
                         <TaskList />
                         <TaskCreate />
+                    </div>
+                );
+            case 'users':
+                return (
+                    <div>
+                        <UserList />
                     </div>
                 );
             case 'categories':
