@@ -82,9 +82,10 @@ const TaskItem = ({ task }) => {
                         ))}
                     </div>
                     <div>
-                        <button className="btn btn-success btn-sm me-2" onClick={handleUpdate}>Save</button>
+                        <button className="btn btn-outline-dark btn-sm me-2" onClick={handleUpdate}>Save</button>
                         <button className="btn btn-secondary btn-sm" onClick={() => setIsEditing(false)}>Cancel</button>
                     </div>
+                    <button className="btn btn-danger btn-sm" onClick={() => dispatch(deleteTask(task.id))}>Delete</button>
                 </>
             ) : (
                 <>
@@ -105,11 +106,10 @@ const TaskItem = ({ task }) => {
                         {task.completed ? (
                             <span className="btn btn-outline-dark" style={{backgroundColor: 'transparent', cursor: 'default', borderColor: 'transparent', color: 'black'}}>Completed</span>
                         ) : (
-                            <button className="btn btn-success btn-sm me-2" onClick={handleCompletion}>Complete</button>
+                            <button className="btn btn-outline-dark btn-sm me-2" onClick={handleCompletion}>Complete</button>
                         )}
                         
-                        <button className="btn btn-info btn-sm me-2" onClick={() => setIsEditing(true)}>Edit</button>
-                        <button className="btn btn-danger btn-sm" onClick={() => dispatch(deleteTask(task.id))}>Delete</button>
+                        <button className="btn btn-outline-dark btn-sm me-2" onClick={() => setIsEditing(true)}>Edit</button>
                     </div>
                 </>
             )}

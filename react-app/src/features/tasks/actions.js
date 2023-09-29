@@ -8,6 +8,7 @@ export const ADD_TASK = 'ADD_TASK';
 export const DELETE_TASK = 'DELETE_TASK';
 export const UPDATE_TASK = 'UPDATE_TASK';
 export const COMPLETE_TASK_SUCCESS = 'COMPLETE_TASK_SUCCESS';
+export const SET_CATEGORY_FILTER = 'SET_CATEGORY_FILTER';
 
 export const fetchTasks = () => async dispatch => {
     const response = await axios.get(`${API_URL}/tasks`);
@@ -31,6 +32,10 @@ export const deleteTask = (id) => async dispatch => {
 export const updateTask = (id, task) => async dispatch => {
     const response = await axios.put(`${API_URL}/tasks/${id}`, task);
     dispatch({ type: UPDATE_TASK, payload: response.data });
+};
+
+export const setCategoryFilter = (category) => async dispatch => {
+    dispatch({ type: SET_CATEGORY_FILTER, payload: category });
 };
 
 export const completeTask = (id) => {
@@ -57,16 +62,18 @@ export const completeTask = (id) => {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
                 }
+                dispatch({
+                    type: 'COMPLETE_TASK_SUCCESS',
+                    payload: {
+                        id: id,
+                        updatedTask: response.data
+                    }
+                });
                 return response.json();
             })
             .catch(error => {
                 console.error("There was a problem with the fetch operation:", error.message);
             });
-        
-        
-
-
-            
         } catch(error) {
             dispatch({
                 type: 'COMPLETE_TASK_FAILURE',

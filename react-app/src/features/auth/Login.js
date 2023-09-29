@@ -34,7 +34,7 @@ const Login = () => {
                         className="form-control"
                     />
                 </div>
-                <button type="submit" className="btn btn-primary">Login</button>
+                <button type="submit" className="btn btn-outline-dark">Login</button>
             </form>
         </div>
     );

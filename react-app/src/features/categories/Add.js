@@ -19,7 +19,7 @@ const CategoryCreate = () => {
 
     if (!showForm) {
         return (
-            <button onClick={() => setShowForm(true)} className="btn btn-primary mt-2">
+            <button onClick={() => setShowForm(true)} className="btn btn-dark mt-2">
                 Create New Category
             </button>
         );
@@ -37,7 +37,7 @@ const CategoryCreate = () => {
                         placeholder="Enter new category..."
                     />
                 </div>
-                <button type="submit" className="btn btn-primary me-2">Add Category</button>
+                <button type="submit" className="btn btn-dark me-2">Add Category</button>
                 <button type="button" className="btn btn-secondary" onClick={() => setShowForm(false)}>Cancel</button>
             </form>
         </div>

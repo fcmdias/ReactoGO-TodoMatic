@@ -44,7 +44,9 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request, col *mongo.Collec
 	task.CreatedBy = user.ID
 	task.CreatedAt = time.Now()
 	task.Completed = false
-	task.Categories = []primitive.ObjectID{}
+	if len(task.Categories) == 0 {
+		task.Categories = []primitive.ObjectID{}
+	}
 	task.Creator.Username = user.Username
 
 	// ================================================================

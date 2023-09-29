@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addTask } from './actions';
 
 const TaskCreate = () => {
@@ -7,16 +7,20 @@ const TaskCreate = () => {
     const [recurrence, setRecurrence] = useState('none');
     const [customRecurrence, setCustomRecurrence] = useState('');
     const [showForm, setShowForm] = useState(false);
+    const categoryFilter = useSelector(state => state.tasks.categoryFilter) || "All";
     const dispatch = useDispatch();
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
         if (taskTitle.trim()) {
+
             dispatch(addTask({
                 title: taskTitle,
-                recurrence: recurrence === 'custom' ? customRecurrence : recurrence
+                recurrence: recurrence === 'custom' ? customRecurrence : recurrence,
+                categories: categoryFilter !== 'All' ? [categoryFilter] : []
             }));
+
             setTaskTitle('');
             setRecurrence('none');
             setCustomRecurrence('');
@@ -56,11 +60,11 @@ const TaskCreate = () => {
                             />
                         </div>
                     )}
-                    <button type="submit" className="btn btn-primary me-2">Add Task</button>
+                    <button type="submit" className="btn btn-dark me-2">Add Task</button>
                     <button type="button" className="btn btn-secondary" onClick={() => setShowForm(false)}>Cancel</button>
                 </form>
             ) : (
-                <button className="btn btn-primary" onClick={() => setShowForm(true)}>Create a New Task</button>
+                <button className="btn btn-dark" onClick={() => setShowForm(true)}>Create a New Task</button>
             )}
         </div>
     );

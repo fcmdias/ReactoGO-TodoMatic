@@ -1,18 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, {useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchTasks } from './actions';
+import { fetchTasks, setCategoryFilter } from './actions';
 import { fetchCategories } from '../categories/actions';
 import TaskItem from './Item';  // Import the new TaskItem component
 
 const TaskList = () => {
     const dispatch = useDispatch();
-    const tasks = useSelector(state => state.tasks.tasks) || [];
+    // const tasks = useSelector(state => state.tasks.tasks) || [];
+    const filteredTasks = useSelector(state => state.tasks.filteredTasks) || [];
+    const categoryFilter = useSelector(state => state.tasks.categoryFilter) || "All";
     const categories = useSelector(state => state.categories.categories) || [];
-    const [filter, setFilter] = useState("All");
 
-    const filteredTasks = filter === "All" 
-    ? tasks 
-    : tasks.filter(task => task.categories.includes(filter));
 
     useEffect(() => {
         dispatch(fetchTasks());
@@ -22,8 +20,7 @@ const TaskList = () => {
     return (
         <div className="list-group mt-3">
 
-            {/* Dropdown filter */}
-            <select value={filter} onChange={(e) => setFilter(e.target.value)}>
+            <select value={categoryFilter} onChange={(e) => dispatch(setCategoryFilter(e.target.value))}>
                 <option key="All" value="All">
                     All
                 </option>

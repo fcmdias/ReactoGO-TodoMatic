@@ -70,7 +70,7 @@ const Register = () => {
                         placeholder="Confirm Password"
                     />
                 </div>
-                <button type="submit" className="btn btn-primary">Register</button>
+                <button type="submit" className="btn btn-outline-dark">Register</button>
             </form>
         </div>
     );

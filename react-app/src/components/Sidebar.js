@@ -23,20 +23,20 @@ const Sidebar = ({ setSection, currentSection }) => {
             {isAuthenticated ? (
                 <>
                     <button 
-                        className={`btn ${currentSection === 'users' ? 'btn-primary' : 'btn-outline-primary'} w-100 mb-2`}
+                        className={`btn ${currentSection === 'users' ? 'btn-dark' : 'btn-outline-dark'} w-100 mb-2`}
                         onClick={() => setSection('users')}
                     >
                         Users
                     </button>
                     <button 
-                        className={`btn ${currentSection === 'tasks' ? 'btn-primary' : 'btn-outline-primary'} w-100 mb-2`}
+                        className={`btn ${currentSection === 'tasks' ? 'btn-dark' : 'btn-outline-dark'} w-100 mb-2`}
                         onClick={() => setSection('tasks')}
                     >
                         Tasks
                     </button>
 
                     <button 
-                        className={`btn ${currentSection === 'categories' ? 'btn-primary' : 'btn-outline-primary'} w-100 mb-2`}
+                        className={`btn ${currentSection === 'categories' ? 'btn-dark' : 'btn-outline-dark'} w-100 mb-2`}
                         onClick={() => setSection('categories')}
                     >
                         Categories
@@ -57,13 +57,13 @@ const Sidebar = ({ setSection, currentSection }) => {
             ) : (
                 <>
                     <button 
-                        className={`btn ${currentSection === 'login' ? 'btn-primary' : 'btn-outline-primary'} w-100 mb-2`}
+                        className={`btn ${currentSection === 'login' ? 'btn-dark' : 'btn-outline-dark'} w-100 mb-2`}
                         onClick={() => setSection('login')}
                     >
                         Login
                     </button>
                     <button 
-                        className={`btn ${currentSection === 'register' ? 'btn-primary' : 'btn-outline-primary'} w-100 mb-2`}
+                        className={`btn ${currentSection === 'register' ? 'btn-dark' : 'btn-outline-dark'} w-100 mb-2`}
                         onClick={() => setSection('register')}
                     >
                         Register
