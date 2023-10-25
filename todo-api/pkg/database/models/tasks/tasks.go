@@ -20,6 +20,7 @@ type Task struct {
 	Categories []primitive.ObjectID `json:"categories" bson:"categories"`
 	Completed  bool                 `json:"completed,omitempty" bson:"completed,omitempty"`
 	Recurrence RecurrenceType       `json:"recurrence,omitempty" bson:"recurrence,omitempty"`
+	IsPublic   bool                 `json:"isPublic" bson:"isPublic"`
 	CreatedBy  primitive.ObjectID   `json:"created_by, omitempty" bson:"created_by"`
 	CreatedAt  time.Time            `json:"createdAt,omitempty" bson:"createdAt,omitempty"`
 }
